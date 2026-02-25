@@ -8,9 +8,6 @@ import {
 } from 'typeorm';
 import { TaskAssignmentOrm } from '../../assignments/entities/task-assignment.entity';
 
-/** DOCUMENTACION:
- * UserOrm: Entidad que mapea la tabla "users" de PostgreSQL.
- */
 export enum UserRole {
   ADMIN = 'admin',
   MEMBER = 'member',
@@ -27,7 +24,6 @@ export class UserOrm {
   @Column({ type: 'varchar', length: 150, unique: true })
   email: string;
 
-  // type: 'enum' mapea directamente al tipo ENUM de PostgreSQL
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -41,8 +37,6 @@ export class UserOrm {
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  // Relación: un usuario puede tener muchas asignaciones (tabla intermedia)
-  // Equivalente a: relacionado con Task via ManyToMany a través de task_assignments
   @OneToMany(() => TaskAssignmentOrm, (assignment) => assignment.user)
   assignments: TaskAssignmentOrm[];
 }

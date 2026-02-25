@@ -2,12 +2,6 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreateTaskDto } from './create-task.dto';
 import { IsDateString, IsEmail, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class UpdateTaskDto extends PartialType(CreateTaskDto) {}
-
-/** DOCUMENTACION:
- * GetTaskFilterDto: Query params para filtrar y buscar tareas.
- * Ejemplo: GET /api/v1/tasks?title=bug&user_email=john@company.com&due_date=2025-12-31
- */
 export class GetTaskFilterDto {
   @IsOptional()
   @IsString()

@@ -9,7 +9,8 @@ import { TaskOrm } from './entities/task.entity';
 import { TaskAssignmentOrm } from '../assignments/entities/task-assignment.entity';
 import { UserOrm } from '../users/entities/user.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto, GetTaskFilterDto } from './dto/task.dto';
+import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -27,7 +28,6 @@ export class TasksService {
   async create(createTaskDto: CreateTaskDto): Promise<TaskOrm> {
     const { assigned_user_ids = [], ...taskData } = createTaskDto;
 
-    // DOCUMENTACION: Validar que todos los usuarios existen antes de crear la tarea
     if (assigned_user_ids.length > 0) {
       const users = await this.userRepository.findByIds(assigned_user_ids);
       if (users.length !== assigned_user_ids.length) {
@@ -35,11 +35,9 @@ export class TasksService {
       }
     }
 
-    // Crear la tarea
     const task = this.taskRepository.create(taskData);
     const savedTask = await this.taskRepository.save(task);
 
-    // Crear las asignaciones en la tabla intermedia
     if (assigned_user_ids.length > 0) {
       const assignments = assigned_user_ids.map((userId) =>
         this.assignmentRepository.create({
@@ -50,7 +48,6 @@ export class TasksService {
       await this.assignmentRepository.save(assignments);
     }
 
-    // Retornar la tarea con las asignaciones cargadas
     return this.findOne(savedTask.id);
   }
 
@@ -59,7 +56,6 @@ export class TasksService {
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.assignments', 'assignment')
       .leftJoinAndSelect('assignment.user', 'user')
-      // Ordenar de más reciente a menos reciente (como especifica la arquitectura)
       .orderBy('task.created_at', 'DESC');
 
     if (filters.title) {
@@ -70,7 +66,6 @@ export class TasksService {
       qb.andWhere('task.due_date = :due_date', { due_date: filters.due_date });
     }
 
-    // Filtros por usuario: por id, nombre o correo
     if (filters.user_id) {
       qb.andWhere('assignment.user_id = :user_id', { user_id: filters.user_id });
     }
@@ -108,13 +103,10 @@ export class TasksService {
     const task = await this.findOne(id);
     const { assigned_user_ids, ...taskData } = updateTaskDto;
 
-    // Actualizar campos de la tarea
     Object.assign(task, taskData);
     await this.taskRepository.save(task);
 
-    // Si se mandan nuevos usuarios, reasignar completamente
     if (assigned_user_ids !== undefined) {
-      // Validar que los usuarios existen
       if (assigned_user_ids.length > 0) {
         const users = await this.userRepository.findByIds(assigned_user_ids);
         if (users.length !== assigned_user_ids.length) {
@@ -122,7 +114,6 @@ export class TasksService {
         }
       }
 
-      // Eliminar asignaciones anteriores y crear las nuevas
       await this.assignmentRepository.delete({ task_id: id });
 
       if (assigned_user_ids.length > 0) {

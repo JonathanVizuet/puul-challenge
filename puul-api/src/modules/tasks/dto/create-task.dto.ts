@@ -38,7 +38,6 @@ export class CreateTaskDto {
   @Min(0)
   cost?: number;
 
-  // DOCUMENTACION: Array de UUIDs de usuarios a asignar
   @IsOptional()
   @IsArray()
   @IsUUID('all', { each: true })

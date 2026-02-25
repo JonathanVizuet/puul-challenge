@@ -10,20 +10,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 
-/** DOCUMENTACION:
- * UsersService: Contiene toda la lógica de negocio de usuarios.
- */
 @Injectable()
 export class UsersService {
   constructor(
-    // InjectRepository: inyecta el repositorio de TypeORM para UserOrm
-    // Equivalente a: db: Session = Depends(get_db) en FastAPI
     @InjectRepository(UserOrm)
     private readonly userRepository: Repository<UserOrm>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserOrm> {
-    // Verificar que el email no esté duplicado
     const existing = await this.userRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -36,19 +30,12 @@ export class UsersService {
   }
 
   async findAll(filters: GetUsersFilterDto): Promise<any[]> {
-    /**
-     * QueryBuilder: constructor de queries SQL.
-     * Equivalente a SQLAlchemy:
-     *   query = db.query(User)
-     *   if name: query = query.filter(User.name.ilike(f"%{name}%"))
-     */
     const qb = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.assignments', 'assignment')
       .leftJoinAndSelect('assignment.task', 'task');
 
     if (filters.name) {
-      // ILIKE = case-insensitive LIKE, equivalente a .ilike() en SQLAlchemy
       qb.andWhere('user.name ILIKE :name', { name: `%${filters.name}%` });
     }
     if (filters.email) {
@@ -60,7 +47,6 @@ export class UsersService {
 
     const users = await qb.getMany();
 
-    // Enriquece cada usuario con sus estadísticas de tareas terminadas
     return users.map((user) => {
       const completedTasks = (user.assignments || [])
         .map((a) => a.task)
@@ -127,7 +113,6 @@ export class UsersService {
       throw new NotFoundException(`Usuario con id ${id} no encontrado`);
     }
 
-    // Si cambia el email, verificar que no esté duplicado
     if (updateUserDto.email && updateUserDto.email !== user.email) {
       const existing = await this.userRepository.findOne({
         where: { email: updateUserDto.email },

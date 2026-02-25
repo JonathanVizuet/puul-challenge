@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-//DOCUMENTACION: Maneja de manera global los errores, y maneja formato estándar de error
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {

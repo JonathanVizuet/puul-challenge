@@ -12,7 +12,6 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
       envFilePath: '.env',
     }),
 
-    //DOCUMENTACION:
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

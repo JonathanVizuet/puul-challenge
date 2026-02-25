@@ -7,7 +7,6 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-//DOCUMENTACION: Transformación global de respuestas → formato estándar de éxito
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
