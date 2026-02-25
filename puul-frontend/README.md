@@ -1,27 +1,73 @@
-# PuulFrontend
+# puul-frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Cliente web del sistema de gestión de tareas para challenge técnico Puul, construido con Angular 17 y TypeScript. Consume la API REST desarrollada en `puul-api`.
 
-## Development server
+La arquitectura completa del proyecto, decisiones técnicas y documentación de la API se encuentran en:
+**https://www.notion.so/Challenge-Back-End-Puul-30e83ffea94880d1abb6c976d1bc82e0**
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## Requisitos previos
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Node.js
+- Angular CLI v17 (`npm install -g @angular/cli@17`)
+- La API `puul-api` corriendo en `http://localhost:3000`
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Instalación
 
-## Running unit tests
+```bash
+# 1. Entrar a la carpeta del frontend
+cd puul-frontend
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+# 2. Instalar dependencias
+npm install --legacy-peer-deps
 
-## Running end-to-end tests
+# 3. Levantar el servidor de desarrollo
+ng serve
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+La aplicación estará disponible en `http://localhost:4200`.
 
-## Further help
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Variables de entorno
+
+El archivo `src/environments/environment.ts` contiene la URL base de la API:
+
+```typescript
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:3000/api/v1'
+};
+```
+
+Si la API corre en un puerto distinto, actualiza el valor de `apiUrl`.
+
+---
+
+## Estructura del proyecto
+
+```
+src/app/
+├── core/
+│   ├── guards/         # AuthGuard — protege rutas privadas
+│   ├── interceptors/   # JWT Interceptor + Error Interceptor
+│   └── services/       # AuthService, UsersService, TasksService, AnalyticsService
+├── shared/
+│   └── models/         # Interfaces TypeScript (User, Task, ApiResponse)
+└── features/
+    ├── auth/login/     # Pantalla de login
+    ├── users/          # Gestión de usuarios
+    ├── tasks/          # Gestión de tareas
+    └── analytics/      # Dashboard de estadísticas
+```
+
+---
+
+## Uso
+
+1. Asegúrate de que `puul-api` esté corriendo.
+2. Inicia sesión con el correo de un usuario existente en la base de datos.
+3. Navega entre las secciones: **Usuarios**, **Tareas** y **Analítica**.
