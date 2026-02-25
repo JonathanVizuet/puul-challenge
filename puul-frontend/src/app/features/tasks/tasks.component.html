@@ -1,0 +1,185 @@
+<div class="page">
+    <div class="page-header">
+      <div>
+        <h1>Tareas</h1>
+        <p class="page-sub">Gestión y seguimiento del trabajo del equipo</p>
+      </div>
+      <button class="btn-primary" (click)="openCreate()">+ Nueva tarea</button>
+    </div>
+  
+    <!-- Filtros para las tareas -->
+    <div class="filters-bar">
+      <input type="text" placeholder="Buscar por título..." [(ngModel)]="filters.title" />
+      <input type="date" [(ngModel)]="filters.due_date" />
+      <input type="text" placeholder="Nombre del usuario..." [(ngModel)]="filters.user_name" />
+      <input type="email" placeholder="Correo del usuario..." [(ngModel)]="filters.user_email" />
+      <button class="btn-secondary" (click)="applyFilters()">Filtrar</button>
+      <button class="btn-ghost" (click)="clearFilters()">Limpiar</button>
+    </div>
+  
+    <div class="alert-success" *ngIf="successMsg">{{ successMsg }}</div>
+    <div class="alert-error" *ngIf="error">{{ error }}</div>
+  
+    <div class="card" *ngIf="!loading; else loadingTpl">
+      <table class="table" *ngIf="tasks.length > 0; else emptyTpl">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Estado</th>
+            <th>Vencimiento</th>
+            <th>Horas est.</th>
+            <th>Costo</th>
+            <th>Asignados</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of tasks" [class.row-overdue]="isOverdue(task)">
+            <td>
+              <span class="clickable" (click)="openDetail(task)">{{ task.title }}</span>
+              <span class="overdue-tag" *ngIf="isOverdue(task)">Vencida</span>
+            </td>
+            <td>
+              <span
+                class="badge clickable"
+                [ngClass]="task.status === 'completed' ? 'badge-completed' : 'badge-active'"
+                (click)="toggleStatus(task)"
+                title="Click para cambiar estado">
+                {{ task.status }}
+              </span>
+            </td>
+            <td>{{ task.due_date || '—' }}</td>
+            <td>{{ task.estimated_hours ?? '—' }}h</td>
+            <td>${{ task.cost ?? 0 | number }}</td>
+            <td>
+              <div class="avatars">
+                <span class="avatar" *ngFor="let a of task.assignments" [title]="a.user?.name">
+                  {{ a.user?.name?.charAt(0) }}
+                </span>
+                <span *ngIf="task.assignments.length === 0" class="text-muted">—</span>
+              </div>
+            </td>
+            <td class="actions">
+              <button class="btn-icon" (click)="openEdit(task)" title="Editar">✏️</button>
+              <button class="btn-icon danger" (click)="deleteTask(task)" title="Eliminar">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyTpl>
+        <div class="empty-state">No hay tareas. ¡Crea la primera!</div>
+      </ng-template>
+    </div>
+    <ng-template #loadingTpl><div class="loading">Cargando...</div></ng-template>
+  </div>
+  
+  <!-- Modal para crear o editar tareas -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingTask ? 'Editar tarea' : 'Nueva tarea' }}</h2>
+        <button class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>Título *</label>
+            <input type="text" [(ngModel)]="form.title" placeholder="Título de la tarea" />
+          </div>
+          <div class="field full">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="form.description" rows="3" placeholder="Descripción detallada..."></textarea>
+          </div>
+          <div class="field">
+            <label>Horas estimadas</label>
+            <input type="number" [(ngModel)]="form.estimated_hours" min="0" placeholder="0" />
+          </div>
+          <div class="field">
+            <label>Costo ($)</label>
+            <input type="number" [(ngModel)]="form.cost" min="0" placeholder="0" />
+          </div>
+          <div class="field">
+            <label>Fecha de vencimiento</label>
+            <input type="date" [(ngModel)]="form.due_date" />
+          </div>
+          <div class="field">
+            <label>Estado</label>
+            <select [(ngModel)]="form.status">
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Usuarios asignados</label>
+            <div class="user-checkboxes">
+              <label class="checkbox-item" *ngFor="let user of users">
+                <input
+                  type="checkbox"
+                  [checked]="isUserAssigned(user.id)"
+                  (change)="toggleUser(user.id)"
+                />
+                <span>{{ user.name }} <small>({{ user.role }})</small></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="alert-error" *ngIf="formError">{{ formError }}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeModal()">Cancelar</button>
+        <button class="btn-primary" (click)="saveTask()" [disabled]="formLoading || !form.title">
+          {{ formLoading ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de datalles de la tarea -->
+  <div class="modal-overlay" *ngIf="showDetail" (click)="closeDetail()">
+    <div class="modal modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ selectedTask?.title }}</h2>
+        <button class="btn-close" (click)="closeDetail()">✕</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedTask">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Estado</span>
+            <span class="badge" [ngClass]="selectedTask.status === 'completed' ? 'badge-completed' : 'badge-active'">
+              {{ selectedTask.status }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Vencimiento</span>
+            <span>{{ selectedTask.due_date || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Horas estimadas</span>
+            <span>{{ selectedTask.estimated_hours ?? '—' }}h</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Costo</span>
+            <span>${{ selectedTask.cost ?? 0 | number }}</span>
+          </div>
+        </div>
+        <div class="field" style="margin-top:1rem" *ngIf="selectedTask.description">
+          <span class="detail-label">Descripción</span>
+          <p>{{ selectedTask.description }}</p>
+        </div>
+        <h3 style="margin-top:1.5rem">Equipo asignado</h3>
+        <div class="team-list" *ngIf="selectedTask.assignments.length > 0; else noTeam">
+          <div class="team-item" *ngFor="let a of selectedTask.assignments">
+            <span class="avatar">{{ a.user?.name?.charAt(0) }}</span>
+            <div>
+              <strong>{{ a.user?.name }}</strong>
+              <small>{{ a.user?.email }}</small>
+            </div>
+            <span class="badge" [ngClass]="a.user?.role === 'admin' ? 'badge-admin' : 'badge-member'">
+              {{ a.user?.role }}
+            </span>
+          </div>
+        </div>
+        <ng-template #noTeam><p class="empty-state">Sin usuarios asignados</p></ng-template>
+      </div>
+    </div>
+  </div>

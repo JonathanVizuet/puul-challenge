@@ -1,0 +1,143 @@
+<div class="page">
+    <div class="page-header">
+      <div>
+        <h1>Usuarios</h1>
+        <p class="page-sub">Gestión del equipo de trabajo</p>
+      </div>
+      <button class="btn-primary" (click)="openCreate()">+ Nuevo usuario</button>
+    </div>
+  
+    <!-- Filtros para usuerio -->
+    <div class="filters-bar">
+      <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="filters.name" />
+      <input type="email" placeholder="Buscar por correo..." [(ngModel)]="filters.email" />
+      <select [(ngModel)]="filters.role">
+        <option value="">Todos los roles</option>
+        <option value="admin">Admin</option>
+        <option value="member">Member</option>
+      </select>
+      <button class="btn-secondary" (click)="applyFilters()">Filtrar</button>
+      <button class="btn-ghost" (click)="clearFilters()">Limpiar</button>
+    </div>
+  
+    <!-- Mensajes de erro o exito -->
+    <div class="alert-success" *ngIf="successMsg">{{ successMsg }}</div>
+    <div class="alert-error" *ngIf="error">{{ error }}</div>
+  
+    <!-- Tabla de informacion -->
+    <div class="card" *ngIf="!loading; else loadingTpl">
+      <table class="table" *ngIf="users.length > 0; else emptyTpl">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Tareas completadas</th>
+            <th>Costo total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>
+              <span class="clickable" (click)="openDetail(user)">{{ user.name }}</span>
+            </td>
+            <td>{{ user.email }}</td>
+            <td><span class="badge" [ngClass]="getRoleBadge(user.role)">{{ user.role }}</span></td>
+            <td>{{ user.completed_tasks_count ?? 0 }}</td>
+            <td>${{ user.completed_tasks_total_cost ?? 0 | number }}</td>
+            <td class="actions">
+              <button class="btn-icon" (click)="openEdit(user)" title="Editar">✏️</button>
+              <button class="btn-icon danger" (click)="deleteUser(user)" title="Eliminar">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #emptyTpl>
+        <div class="empty-state">No hay usuarios. ¡Crea el primero!</div>
+      </ng-template>
+    </div>
+    <ng-template #loadingTpl>
+      <div class="loading">Cargando...</div>
+    </ng-template>
+  </div>
+  
+  <!-- Modal Crear/Editar -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingUser ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+        <button class="btn-close" (click)="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="form.name" placeholder="Nombre completo" />
+        </div>
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" [(ngModel)]="form.email" placeholder="correo@ejemplo.com" />
+        </div>
+        <div class="field">
+          <label>Rol</label>
+          <select [(ngModel)]="form.role">
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="alert-error" *ngIf="formError">{{ formError }}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" (click)="closeModal()">Cancelar</button>
+        <button class="btn-primary" (click)="saveUser()" [disabled]="formLoading">
+          {{ formLoading ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de detalles -->
+  <div class="modal-overlay" *ngIf="showDetail" (click)="closeDetail()">
+    <div class="modal modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ selectedUser?.name }}</h2>
+        <button class="btn-close" (click)="closeDetail()">✕</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedUser">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Correo</span>
+            <span>{{ selectedUser.email }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Rol</span>
+            <span class="badge" [ngClass]="getRoleBadge(selectedUser.role)">{{ selectedUser.role }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Tareas completadas</span>
+            <span>{{ selectedUser.completed_tasks_count }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Costo total completado</span>
+            <span>${{ selectedUser.completed_tasks_total_cost | number }}</span>
+          </div>
+        </div>
+  
+        <h3 style="margin-top: 1.5rem;">Tareas asignadas</h3>
+        <table class="table" *ngIf="selectedUser.tasks && selectedUser.tasks.length > 0; else noTasks">
+          <thead>
+            <tr><th>Título</th><th>Estado</th><th>Vencimiento</th><th>Costo</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of selectedUser.tasks">
+              <td>{{ task.title }}</td>
+              <td><span class="badge" [ngClass]="task.status === 'completed' ? 'badge-completed' : 'badge-active'">{{ task.status }}</span></td>
+              <td>{{ task.due_date || '—' }}</td>
+              <td>${{ task.cost | number }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #noTasks><p class="empty-state">Sin tareas asignadas</p></ng-template>
+      </div>
+    </div>
+  </div>

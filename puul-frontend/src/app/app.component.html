@@ -1,0 +1,39 @@
+<div class="app-shell">
+  <!-- Sidebar -->
+  <aside class="sidebar" *ngIf="isAuthenticated">
+    <div class="sidebar-brand">
+      <span class="brand-name">Puul.</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/users" routerLinkActive="active">
+        <span class="nav-icon">👥</span>
+        <span>Usuarios</span>
+      </a>
+      <a routerLink="/tasks" routerLinkActive="active">
+        <span class="nav-icon">✅</span>
+        <span>Tareas</span>
+      </a>
+      <a routerLink="/analytics" routerLinkActive="active">
+        <span class="nav-icon">📊</span>
+        <span>Analítica</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">{{ currentUser?.name?.charAt(0) }}</div>
+        <div class="user-meta">
+          <span class="user-name">{{ currentUser?.name }}</span>
+          <span class="user-role">{{ currentUser?.role }}</span>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()" title="Cerrar sesión">⏻</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content" [class.no-sidebar]="!isAuthenticated">
+    <router-outlet></router-outlet>
+  </main>
+</div>

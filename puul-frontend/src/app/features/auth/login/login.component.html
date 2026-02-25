@@ -1,0 +1,29 @@
+<div class="login-wrapper">
+    <div class="login-card">
+      <div class="brand">
+        <span class="brand-name">Puul.</span>
+        <p class="brand-sub">Task Management System. Challenge Puul</p>
+      </div>
+  
+      <form (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input
+            id="email"
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="ejemplo@correo.com"
+            [disabled]="loading"
+            autocomplete="off"
+          />
+        </div>
+  
+        <div class="alert-error" *ngIf="error">{{ error }}</div>
+  
+        <button class="btn-primary" type="submit" [disabled]="loading || !email">
+          {{ loading ? 'Ingresando...' : 'Ingresar' }}
+        </button>
+      </form>
+    </div>
+  </div>

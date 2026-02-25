@@ -28,6 +28,8 @@ Para ejecutar el proyecto localmente, sigue las instrucciones detalladas en cada
 
 2.  Configuración del Frontend: Dentro de la carpeta 'puul-frontend' se encuentra un README para instalar las dependencias de la interfaz.
 
+Es importante recordar que se necesitan tener ambos proyectos corrriendo para que el sistema pueda funcionar correctamente. 
+
 ---
 
 ## Requisitos Globales

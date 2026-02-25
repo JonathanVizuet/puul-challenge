@@ -1,0 +1,98 @@
+<div class="page">
+    <div class="page-header">
+      <div>
+        <h1>Analítica</h1>
+        <p class="page-sub">Estadísticas y métricas del equipo</p>
+      </div>
+    </div>
+  
+    <div class="loading" *ngIf="loading">Cargando estadísticas...</div>
+    <div class="alert-error" *ngIf="error">{{ error }}</div>
+  
+    <div *ngIf="stats && !loading">
+      <!-- Resumen de metricas -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-value">{{ stats.task_overview.total_tasks }}</span>
+          <span class="kpi-label">Total de tareas</span>
+        </div>
+        <div class="kpi-card kpi-warning">
+          <span class="kpi-value">{{ stats.task_overview.overdue_tasks }}</span>
+          <span class="kpi-label">Tareas vencidas</span>
+        </div>
+        <div class="kpi-card kpi-success">
+          <span class="kpi-value">{{ getCompletionRate() }}%</span>
+          <span class="kpi-label">Tasa de completitud</span>
+        </div>
+        <div class="kpi-card kpi-info">
+          <span class="kpi-value">${{ getTotalCost() | number }}</span>
+          <span class="kpi-label">Costo total</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-value">{{ getTotalHours() }}h</span>
+          <span class="kpi-label">Horas estimadas totales</span>
+        </div>
+      </div>
+  
+      <!-- Por estado -->
+      <div class="section-title">Resumen por estado</div>
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr><th>Estado</th><th>Tareas</th><th>Costo total</th><th>Horas estimadas</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of stats.task_overview.by_status">
+              <td>
+                <span class="badge" [ngClass]="s.status === 'completed' ? 'badge-completed' : 'badge-active'">
+                  {{ s.status }}
+                </span>
+              </td>
+              <td>{{ s.count }}</td>
+              <td>${{ s.total_cost | number }}</td>
+              <td>{{ s.total_estimated_hours }}h</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Productividad por usuario -->
+      <div class="section-title" style="margin-top: 2rem;">Productividad por usuario</div>
+      <div class="card">
+        <table class="table" *ngIf="stats.user_productivity.length > 0; else noData">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Rol</th>
+              <th>Completadas</th>
+              <th>Activas</th>
+              <th>Horas completadas</th>
+              <th>Costo completado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of stats.user_productivity">
+              <td>
+                <div>
+                  <strong>{{ u.user_name }}</strong>
+                  <small style="display:block; color: #888">{{ u.user_email }}</small>
+                </div>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="u.role === 'admin' ? 'badge-admin' : 'badge-member'">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td>{{ u.completed_tasks }}</td>
+              <td>{{ u.active_tasks }}</td>
+              <td>{{ u.total_hours_completed }}h</td>
+              <td>${{ u.total_cost_completed | number }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #noData>
+          <div class="empty-state">No hay datos de productividad aún</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,132 @@
+/* ── Layout Shell ─────────────────────────────── */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* ── Sidebar ──────────────────────────────────── */
+  .sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: #0f1117;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    z-index: 100;
+  }
+  
+  .sidebar-brand {
+    padding: 1.5rem 1.25rem 1rem;
+    border-bottom: 1px solid #1e2130;
+  }
+  
+  .brand-name {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #c6ff00;
+    letter-spacing: -1px;
+  }
+  
+  .sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    color: #8b92a5;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  
+  .sidebar-nav a:hover {
+    background: #1a1f2e;
+    color: #fff;
+  }
+  
+  .sidebar-nav a.active {
+    background: #1a2a00;
+    color: #c6ff00;
+  }
+  
+  .nav-icon { font-size: 1rem; }
+  
+  .sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid #1e2130;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #c6ff00;
+    color: #0f1117;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  
+  .user-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  
+  .user-name {
+    font-size: 0.8rem;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .user-role {
+    font-size: 0.7rem;
+    color: #8b92a5;
+    text-transform: capitalize;
+  }
+  
+  .btn-logout {
+    background: none;
+    border: none;
+    color: #8b92a5;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .btn-logout:hover { color: #ff4d4d; }
+  
+  /* ── Main Content ─────────────────────────────── */
+  .main-content {
+    margin-left: 220px;
+    flex: 1;
+    background: #f5f6fa;
+    min-height: 100vh;
+  }
+  
+  .main-content.no-sidebar { margin-left: 0; }
