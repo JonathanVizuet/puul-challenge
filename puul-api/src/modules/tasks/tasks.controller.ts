@@ -9,12 +9,15 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
@@ -30,7 +33,6 @@ export class TasksController {
     return this.tasksService.findAll(filters);
   }
 
-  // GET /api/v1/tasks/:id
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tasksService.findOne(id);
