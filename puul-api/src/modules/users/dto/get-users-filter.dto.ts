@@ -1,12 +1,9 @@
 import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
 
-/**
+/** DOCUMENTACION:
  * GetUsersFilterDto: Define los query params opcionales para filtrar usuarios.
  * Ejemplo de uso: GET /api/v1/users?name=John&role=admin
- *
- * En FastAPI esto sería:
- *   async def get_users(name: Optional[str] = None, role: Optional[str] = None):
  */
 export class GetUsersFilterDto {
   @IsOptional()

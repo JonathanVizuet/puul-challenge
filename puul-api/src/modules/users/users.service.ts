@@ -10,12 +10,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 
-/**
+/** DOCUMENTACION:
  * UsersService: Contiene toda la lógica de negocio de usuarios.
- * Equivalente a los "views" en Django o los servicios en FastAPI con dependency injection.
- *
- * @Injectable() permite que NestJS lo inyecte en los controladores automáticamente
- * (como el sistema de Depends() en FastAPI).
  */
 @Injectable()
 export class UsersService {

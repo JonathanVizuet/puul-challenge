@@ -7,7 +7,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global prefix: todas las rutas serán /api/v1/...
+  // DOCUMENTACION: Global prefix: todas las rutas serán /api/v1/...
   app.setGlobalPrefix('api/v1');
 
   // ValidationPipe: equivalente al "validator" de Pydantic en FastAPI
@@ -28,7 +28,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`🚀 Puul API running on: http://localhost:${port}/api/v1`);
+  console.log(`Puul API running on: http://localhost:${port}/api/v1`);
 }
 
 bootstrap();

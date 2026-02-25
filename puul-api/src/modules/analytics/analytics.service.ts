@@ -15,7 +15,7 @@ export class AnalyticsService {
   ) {}
 
   async getStats(): Promise<any> {
-    // ─── Estadística 1: Resumen general de tareas ───────────────────────────
+    // DOCUMENTACION: ─── Estadística 1: Resumen general de tareas ───────────────────────────
     // Muestra cuántas tareas hay por estado y el costo total comprometido.
     // Útil para que el equipo directivo vea el estado global del proyecto.
     const taskSummary = await this.taskRepository
@@ -34,7 +34,7 @@ export class AnalyticsService {
       .andWhere('task.status != :status', { status: TaskStatus.COMPLETED })
       .getCount();
 
-    // ─── Estadística 2: Ranking de usuarios por productividad ───────────────
+    // DOCUMENTACION: ─── Estadística 2: Ranking de usuarios por productividad ───────────────
     // Muestra quién ha completado más tareas y cuánto valor ha generado en costo.
     // Útil para gestión de equipos y evaluación de desempeño.
     const userProductivity = await this.userRepository

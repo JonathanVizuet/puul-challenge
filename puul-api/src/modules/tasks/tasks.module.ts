@@ -8,7 +8,7 @@ import { UserOrm } from '../users/entities/user.entity';
 
 @Module({
   imports: [
-    // Registra las 3 entidades que TasksService necesita manejar
+    // DOCUMENTACION: Registra las 3 entidades que TasksService necesita manejar
     TypeOrmModule.forFeature([TaskOrm, TaskAssignmentOrm, UserOrm]),
   ],
   controllers: [TasksController],

@@ -8,10 +8,8 @@ import {
 import { UserOrm } from '../../users/entities/user.entity';
 import { TaskOrm } from '../../tasks/entities/task.entity';
 
-/**
- * TaskAssignmentOrm: Tabla intermedia que resuelve la relación M:N entre Users y Tasks.
- * En Django esto sería una tabla "through" en un ManyToManyField.
- * En SQLAlchemy sería una association_table.
+/** DOCUMENTACION:
+ * TaskAssignmentOrm: Tabla intermedia que resuelve la relación M:N entre Users y Tasks
  */
 @Entity('task_assignments')
 export class TaskAssignmentOrm {
@@ -24,12 +22,12 @@ export class TaskAssignmentOrm {
   @CreateDateColumn({ type: 'timestamptz' })
   assigned_at: Date;
 
-  // ManyToOne: muchas asignaciones pertenecen a una tarea
+  // DOCUMENTACION: ManyToOne: muchas asignaciones pertenecen a una tarea
   @ManyToOne(() => TaskOrm, (task) => task.assignments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'task_id' })
   task: TaskOrm;
 
-  // ManyToOne: muchas asignaciones pertenecen a un usuario
+  // DOCUMENTACION: ManyToOne: muchas asignaciones pertenecen a un usuario
   @ManyToOne(() => UserOrm, (user) => user.assignments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserOrm;

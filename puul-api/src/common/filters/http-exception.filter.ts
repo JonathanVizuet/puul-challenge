@@ -7,11 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-/**
- * Filtro global de excepciones.
- * Equivalente a los "exception handlers" en FastAPI (@app.exception_handler)
- * Captura TODOS los errores HTTP y les da el formato estándar definido en la arquitectura.
- */
+//DOCUMENTACION: Maneja de manera global los errores, y maneja formato estándar de error
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -21,7 +17,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
-    // Normaliza el campo "message" para que SIEMPRE sea un array de strings
     let messages: string[];
     if (typeof exceptionResponse === 'string') {
       messages = [exceptionResponse];

@@ -46,7 +46,7 @@ export class TaskOrm {
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 
-  // Relación con la tabla intermedia task_assignments
+  // DOCUMENTACION: Relación con la tabla intermedia task_assignments
   @OneToMany(() => TaskAssignmentOrm, (assignment) => assignment.task, {
     cascade: true, // si se elimina la tarea, se eliminan las asignaciones
     eager: true,   // carga las asignaciones automáticamente al consultar una tarea

@@ -15,15 +15,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUsersFilterDto } from './dto/get-users-filter.dto';
 
-/**
+/**DOCUMENTACION
  * UsersController: Define las rutas HTTP del módulo de usuarios.
- * Equivalente a un APIRouter de FastAPI:
- *   router = APIRouter(prefix="/users")
- *
- * @Controller('users') + prefijo global 'api/v1' = /api/v1/users
- *
- * El controlador SOLO recibe y devuelve datos.
- * La lógica de negocio vive en UsersService.
  */
 @Controller('users')
 export class UsersController {
@@ -39,14 +32,12 @@ export class UsersController {
   }
 
   // GET /api/v1/users?name=John&role=admin
-  // @Query() captura los query parameters, equivalente a Query() en FastAPI
   @Get()
   findAll(@Query() filters: GetUsersFilterDto) {
     return this.usersService.findAll(filters);
   }
 
   // GET /api/v1/users/:id
-  // @Param('id') captura el path parameter, equivalente a Path() en FastAPI
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);

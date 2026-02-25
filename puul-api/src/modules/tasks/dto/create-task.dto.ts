@@ -38,10 +38,9 @@ export class CreateTaskDto {
   @Min(0)
   cost?: number;
 
-  // Array de UUIDs de usuarios a asignar
-  // Equivalente a: assigned_user_ids: Optional[List[UUID]] = []
+  // DOCUMENTACION: Array de UUIDs de usuarios a asignar
   @IsOptional()
   @IsArray()
-  @IsUUID('all', { each: true }) // valida cada elemento del array como UUID
+  @IsUUID('all', { each: true })
   assigned_user_ids?: string[];
 }

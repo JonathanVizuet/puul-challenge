@@ -27,7 +27,7 @@ export class TasksService {
   async create(createTaskDto: CreateTaskDto): Promise<TaskOrm> {
     const { assigned_user_ids = [], ...taskData } = createTaskDto;
 
-    // Validar que todos los usuarios existen antes de crear la tarea
+    // DOCUMENTACION: Validar que todos los usuarios existen antes de crear la tarea
     if (assigned_user_ids.length > 0) {
       const users = await this.userRepository.findByIds(assigned_user_ids);
       if (users.length !== assigned_user_ids.length) {

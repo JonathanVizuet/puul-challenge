@@ -8,12 +8,8 @@ import {
 } from 'typeorm';
 import { TaskAssignmentOrm } from '../../assignments/entities/task-assignment.entity';
 
-/**
+/** DOCUMENTACION:
  * UserOrm: Entidad que mapea la tabla "users" de PostgreSQL.
- * Equivalente a un modelo de Django (class User(models.Model))
- * o a una clase de SQLAlchemy con Base.
- *
- * @Entity('users') -> nombre de la tabla en la DB
  */
 export enum UserRole {
   ADMIN = 'admin',
